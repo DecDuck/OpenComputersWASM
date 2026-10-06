@@ -13,6 +13,7 @@ import li.cil.oc.integration.Mods
 import li.cil.oc.server._
 import li.cil.oc.server.machine.luac.{LuaStateFactory, NativeLua52Architecture, NativeLua53Architecture, NativeLua54Architecture}
 import li.cil.oc.server.machine.luaj.LuaJLuaArchitecture
+import li.cil.oc.server.machine.wasm.WasmArchitecture
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -51,6 +52,11 @@ class Proxy(val modBus: IEventBus) {
     }
     if (LuaStateFactory.includeLuaJ) {
       api.Machine.add(classOf[LuaJLuaArchitecture])
+    }
+    // Registered after the Lua architectures: the first registered
+    // architecture is the default for new CPUs.
+    if (Settings.get.enableWasm) {
+      api.Machine.add(classOf[WasmArchitecture])
     }
 
     api.Machine.LuaArchitecture =

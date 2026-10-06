@@ -1,0 +1,84 @@
+package oc:machine@0.1.0;
+
+/// Data types shared by all OpenComputers machine interfaces.
+///
+/// OpenComputers components are dynamically typed: a callback may accept and
+/// return any mix of nil, booleans, numbers, strings, tables and opaque host
+/// objects (userdata). WIT does not allow recursive types, so such values are
+/// transported as a flat arena of nodes that reference each other by index.
+interface types {
+    /// Index of a node inside `value-tree.nodes`.
+    type node-index = u32;
+
+    /// Reference to an opaque host object (an OpenComputers `Value`, which
+    /// Lua calls userdata). Handles stay valid until released through
+    /// `userdata.release` or until the machine stops.
+    type handle = u32;
+
+    /// A single dynamically typed value.
+    variant node {
+        /// Absence of a value (Lua `nil`, Java `null`).
+        nil,
+        boolean(bool),
+        integer(s64),
+        number(f64),
+        /// UTF-8 text.
+        text(string),
+        /// Arbitrary binary data.
+        bytes(list<u8>),
+        /// Ordered sequence of values. Passed to the host as a table with
+        /// one-based integer keys, mirroring Lua sequences.
+        array(list<node-index>),
+        /// Key/value pairs.
+        table(list<tuple<node-index, node-index>>),
+        /// Opaque host object.
+        opaque(handle),
+    }
+
+    /// A list of dynamically typed values (for example call arguments or
+    /// results). `roots` lists the top-level values in order; every other
+    /// node is only reachable through an `array` or `table` node. Nodes may
+    /// be shared and may form cycles.
+    record value-tree {
+        nodes: list<node>,
+        roots: list<node-index>,
+    }
+
+    /// Description of a callback exposed by a component or opaque value.
+    record method-info {
+        name: string,
+        /// Whether the callback may run on the machine's worker thread. When
+        /// false, invoking it always yields a `pending` result.
+        direct: bool,
+        /// Whether the callback behaves like a field read.
+        getter: bool,
+        /// Whether the callback behaves like a field write.
+        setter: bool,
+        /// Direct call cost divisor (see `li.cil.oc.api.machine.Callback`).
+        limit: s32,
+    }
+
+    /// Failure of a host call.
+    variant call-error {
+        no-such-component,
+        no-such-method,
+        bad-argument(string),
+        failed(string),
+    }
+
+    /// Outcome of invoking a callback.
+    variant call-result {
+        /// The call completed with the given results.
+        ok(value-tree),
+        /// The call must run on the server thread. The guest has to return
+        /// `step::sync` from `kernel.resume`; the result is then delivered
+        /// as `event::sync-result` on the next resume.
+        ///
+        /// Never returned to guests instrumented with Asyncify: those are
+        /// suspended inside the call instead, which then returns the result
+        /// as if it had blocked.
+        pending,
+        err(call-error),
+    }
+}
+

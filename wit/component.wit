@@ -1,0 +1,39 @@
+package oc:machine@0.1.0;
+
+/// Discovery of, and interaction with, components visible to the machine.
+///
+/// Every OpenComputers peripheral is reachable through this interface: blocks,
+/// cards, upgrades, adapters, and ComputerCraft peripherals wrapped by the
+/// built-in driver. Typed per-peripheral packages are guest-side wrappers
+/// around `invoke`.
+interface component {
+    use types.{value-tree, call-result, method-info};
+
+    record entry {
+        address: string,
+        /// Component type name, for example `gpu` or `filesystem`.
+        kind: string,
+    }
+
+    /// Lists visible components. If `filter` is given, only components whose
+    /// type contains it (or equals it when `exact` is set) are returned.
+    enumerate: func(filter: option<string>, exact: bool) -> list<entry>;
+
+    /// Returns the type name of the component with the given address.
+    kind: func(address: string) -> option<string>;
+
+    /// Returns the slot the component is installed in, if any.
+    slot: func(address: string) -> option<s32>;
+
+    /// Lists the callbacks of a component.
+    methods: func(address: string) -> option<list<method-info>>;
+
+    /// Returns the documentation string of a callback.
+    doc: func(address: string, method: string) -> option<string>;
+
+    /// Invokes a component callback. Direct callbacks complete immediately
+    /// unless the per-tick call budget is exhausted; all other calls return
+    /// `call-result::pending`.
+    invoke: func(address: string, method: string, args: value-tree) -> call-result;
+}
+

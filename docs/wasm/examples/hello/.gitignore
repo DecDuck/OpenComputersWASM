@@ -1,0 +1,5 @@
+# Cargo build output (also covers alternate --target-dir directories).
+# Cargo.lock is committed, so the example builds with known-good versions.
+/target*/
+
+

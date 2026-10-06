@@ -1,0 +1,21 @@
+[package]
+name = "oc-wasm-bios"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Default boot loader for OpenComputers' WebAssembly architecture: boots /init.wasm."
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wit-bindgen = { version = "0.62.0", default-features = false, features = ["macros", "realloc"] }
+lol_alloc = "0.4.1"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+

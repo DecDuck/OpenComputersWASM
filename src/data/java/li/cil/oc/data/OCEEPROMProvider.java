@@ -21,6 +21,9 @@ public class OCEEPROMProvider extends JsonCodecProvider<EEPROM> {
     @Override
     protected void gather() {
         add("luabios", new EEPROM("EEPROM (Lua BIOS)", Optional.of("bios.lua"), Optional.empty(), false));
+        // Built from src/main/wasm/bios and src/main/wasm/shell, see the READMEs there.
+        add("wasmbios", new EEPROM("EEPROM (WASM BIOS)", Optional.of("bios.wasm.gz"), Optional.empty(), false));
+        add("wasmshell", new EEPROM("EEPROM (WASM Shell)", Optional.of("shell.wasm.gz"), Optional.empty(), false));
     }
 
     private void add(String id, EEPROM disk) {

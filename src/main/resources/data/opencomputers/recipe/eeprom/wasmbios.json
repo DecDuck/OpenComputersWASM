@@ -1,0 +1,24 @@
+{
+  "type": "opencomputers:crafting_shapeless_extended",
+  "ingredients": [
+    {
+      "item": "opencomputers:eeprom"
+    },
+    {
+      "item": "opencomputers:chip1"
+    }
+  ],
+  "result": {
+    "id": "opencomputers:eeprom",
+    "components": {
+      "minecraft:custom_data": {
+        "oc:data": {
+          "oc:label": "EEPROM (WASM BIOS)",
+          "oc:eeprom": "opencomputers:wasmbios",
+          "oc:readonly": false
+        }
+      }
+    }
+  }
+}
+

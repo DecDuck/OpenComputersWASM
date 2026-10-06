@@ -8,6 +8,7 @@ are packaged in release JARs under `META-INF/licenses`.
 | --- | --- | --- |
 | JNLua | Lua runtime bindings and native libraries | [JNLua](LICENSES/JNLua.txt) |
 | LuaJ | Pure-Java Lua fallback | [LuaJ](LICENSES/LuaJ.txt) |
+| Chicory | Pure-Java WebAssembly interpreter | [Chicory](LICENSES/Chicory.txt) |
 | Typesafe Config | Configuration parser | [Typesafe Config](LICENSES/Typesafe-Config.txt) |
 | OpenScreens | Adapted display assets and implementation portions | [OpenScreens](LICENSES/OpenScreens.txt) |
 | GNU Unifont | Glyph data used by screens and manuals | [GNU Unifont](LICENSES/Unifont.txt) |

@@ -82,6 +82,14 @@ class Settings(val config: Config) {
   val enableLua53 = config.getBoolean("computer.lua.enableLua53")
   val defaultLua53 = config.getBoolean("computer.lua.defaultLua53")
   val enableLua54 = config.getBoolean("computer.lua.enableLua54")
+
+  // computer.wasm
+  val enableWasm = config.getBoolean("computer.wasm.enable")
+  val wasmMemoryScale = config.getDouble("computer.wasm.memoryScale") max 0
+  val wasmMaxModuleSize = config.getInt("computer.wasm.maxModuleSize") max 0
+  val wasmEnableWasi = config.getBoolean("computer.wasm.wasi")
+  val wasmLogOutput = config.getBoolean("computer.wasm.logOutput")
+  val wasmAsyncifyBufferSize = config.getInt("computer.wasm.asyncifyBufferSize") max 64
   val ramSizes = config.getIntList("computer.lua.ramSizes").asScala.toArray match {
     case Array(tier1, tier2, tier3, tier4, tier5, tier6, tier7, tier8) =>
       Array(tier1: Int, tier2: Int, tier3: Int, tier4: Int, tier5: Int, tier6: Int, tier7: Int, tier8: Int)

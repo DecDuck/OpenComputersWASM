@@ -145,6 +145,11 @@ tasks.named('processResources', ProcessResources).configure {
     from('LICENSES') {
         into 'META-INF/licenses'
     }
+    // WIT definitions of the WebAssembly machine interface, for reference by
+    // guest toolchains (e.g. extracted from the jar).
+    from('wit') {
+        into "assets/${mod_id}/wit"
+    }
 }
 
 repositories {
@@ -242,6 +247,35 @@ dependencies {
     def jnluaNativesDirectory = findProperty('jnluaNativesDirectory') ?: (usePublishedRuntimeDependencies
         ? new File(runtimeDependenciesDirectory, 'jnlua') : null)
 
+    // Pure-Java WebAssembly interpreter backing the WebAssembly architecture.
+    // Nested via jarJar rather than embedded: Chicory ships module-info
+    // descriptors, which must not end up in the root of the OC jar.
+    jarJar(implementation(group: "com.dylibso.chicory", name: "runtime")) {
+        version {
+            strictly "[${chicory_version},2)"
+            prefer chicory_version
+        }
+    }
+    jarJar(implementation(group: "com.dylibso.chicory", name: "wasm")) {
+        version {
+            strictly "[${chicory_version},2)"
+            prefer chicory_version
+        }
+    }
+    // WASI preview 1 support for guests built for wasm32-wasip1.
+    jarJar(implementation(group: "com.dylibso.chicory", name: "wasi")) {
+        version {
+            strictly "[${chicory_version},2)"
+            prefer chicory_version
+        }
+    }
+    jarJar(implementation(group: "com.dylibso.chicory", name: "log")) {
+        version {
+            strictly "[${chicory_version},2)"
+            prefer chicory_version
+        }
+    }
+
     def luaJ = luaJDirectory
         ? files(new File(luaJDirectory, 'OC-LuaJ.jar'))
         : files()
@@ -325,6 +359,10 @@ dependencies {
     additionalRuntimeClasspath luaJ
     additionalRuntimeClasspath jnluaNatives
     additionalRuntimeClasspath "org.scala-lang:scala-library:2.13.12"
+    additionalRuntimeClasspath "com.dylibso.chicory:runtime:${chicory_version}"
+    additionalRuntimeClasspath "com.dylibso.chicory:wasm:${chicory_version}"
+    additionalRuntimeClasspath "com.dylibso.chicory:wasi:${chicory_version}"
+    additionalRuntimeClasspath "com.dylibso.chicory:log:${chicory_version}"
 
     def jeiSlug = "jei-${minecraft_version}"
 

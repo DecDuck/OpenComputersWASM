@@ -1,0 +1,55 @@
+package oc:machine@0.1.0;
+
+/// Entry point implemented by the guest.
+///
+/// The host never keeps a guest call stack alive between ticks: every
+/// interaction is a single call to `resume` which must return quickly. The
+/// guest keeps its own state (for example an async executor) in linear
+/// memory, which is what makes machines persistable. The one exception are
+/// guests instrumented with Asyncify, which may be suspended inside a host
+/// call; their unwound call stack is stored in linear memory, too.
+interface kernel {
+    use types.{value-tree, call-result};
+
+    record queued-signal {
+        name: string,
+        args: value-tree,
+    }
+
+    /// Why the guest is being resumed.
+    variant event {
+        /// First resume after the machine started.
+        boot,
+        /// A requested sleep elapsed without any signal arriving.
+        wake,
+        /// A signal was dequeued (for example `component_added`,
+        /// `key_down`, or a signal pushed by the guest itself).
+        signal(queued-signal),
+        /// Result of the call that previously returned `pending`.
+        sync-result(call-result),
+    }
+
+    /// What the host should do next.
+    variant step {
+        /// Resume after at most this many seconds, or earlier when a signal
+        /// arrives.
+        sleep(f64),
+        /// Resume only when a signal arrives.
+        wait,
+        /// Run the pending call on the server thread, then resume with
+        /// `event::sync-result`.
+        sync,
+        /// Stop the machine; `true` reboots it.
+        shutdown(bool),
+        /// Stop the machine with an error message.
+        crash(string),
+        /// Replace the running module with the given one (a WebAssembly
+        /// binary, optionally gzip-compressed) and resume it with
+        /// `event::boot`. Used by boot loaders: the current module's state
+        /// and userdata handles are discarded.
+        exec(list<u8>),
+    }
+
+    resume: func(event: event) -> step;
+}
+

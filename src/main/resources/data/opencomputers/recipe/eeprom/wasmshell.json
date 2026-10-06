@@ -1,0 +1,24 @@
+{
+  "type": "opencomputers:crafting_shapeless_extended",
+  "ingredients": [
+    {
+      "item": "opencomputers:eeprom"
+    },
+    {
+      "item": "opencomputers:keyboard"
+    }
+  ],
+  "result": {
+    "id": "opencomputers:eeprom",
+    "components": {
+      "minecraft:custom_data": {
+        "oc:data": {
+          "oc:label": "EEPROM (WASM Shell)",
+          "oc:eeprom": "opencomputers:wasmshell",
+          "oc:readonly": false
+        }
+      }
+    }
+  }
+}
+

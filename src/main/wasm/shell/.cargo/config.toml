@@ -1,0 +1,8 @@
+[build]
+target = "wasm32-unknown-unknown"
+
+[target.wasm32-unknown-unknown]
+# Machines have little memory: a small stack keeps the module's initial
+# memory at a single 64 KiB page.
+rustflags = ["-C", "link-arg=-zstack-size=16384"]
+

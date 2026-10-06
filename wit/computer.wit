@@ -1,0 +1,52 @@
+package oc:machine@0.1.0;
+
+/// Information about, and control of, the machine itself.
+interface computer {
+    use types.{value-tree};
+
+    /// Network address of this machine.
+    address: func() -> string;
+
+    /// Address of the temporary file system, if one exists.
+    tmp-address: func() -> option<string>;
+
+    /// Total memory available to the guest, in bytes.
+    total-memory: func() -> u64;
+
+    /// Memory the guest may still grow into, in bytes.
+    free-memory: func() -> u64;
+
+    /// Seconds of in-game time since the machine started.
+    uptime: func() -> f64;
+
+    /// Seconds spent executing on worker threads since the machine started.
+    cpu-time: func() -> f64;
+
+    /// Real-world Unix time, in seconds.
+    real-time: func() -> f64;
+
+    /// Current world time, in ticks.
+    world-time: func() -> s64;
+
+    /// Stored energy available to the machine.
+    energy: func() -> f64;
+
+    /// Maximum energy that can be stored.
+    max-energy: func() -> f64;
+
+    /// Names of the users registered on this machine.
+    users: func() -> list<string>;
+
+    /// Registers a user. The player must be online.
+    add-user: func(name: string) -> result<_, string>;
+
+    /// Unregisters a user. Returns whether the user was registered.
+    remove-user: func(name: string) -> bool;
+
+    /// Queues a signal on this machine. Returns false if the queue is full.
+    push-signal: func(name: string, args: value-tree) -> bool;
+
+    /// Name of the architecture the machine is running.
+    architecture: func() -> string;
+}
+

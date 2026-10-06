@@ -1,0 +1,19 @@
+package oc:machine@0.1.0;
+
+/// A program that runs as an OpenComputers machine.
+///
+/// The host accepts core WebAssembly modules that follow the canonical ABI
+/// for this world, as produced by `wit-bindgen` before componentization.
+/// Such a module must export `memory` and `cabi_realloc`, and must not
+/// import anything outside of this world, except for WASI preview 1
+/// (`wasi_snapshot_preview1`, e.g. when built for `wasm32-wasip1`), which
+/// is provided in a sandboxed form if enabled in the server's config.
+world machine {
+    import component;
+    import userdata;
+    import computer;
+    import unicode;
+
+    export kernel;
+}
+

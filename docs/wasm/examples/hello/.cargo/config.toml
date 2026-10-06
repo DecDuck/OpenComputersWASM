@@ -1,0 +1,8 @@
+[build]
+target = "wasm32-wasip1"
+
+[target.wasm32-wasip1]
+# Computers have little memory; the default 1 MiB stack would not even fit
+# on the smallest RAM stick.
+rustflags = ["-C", "link-arg=-zstack-size=32768"]
+

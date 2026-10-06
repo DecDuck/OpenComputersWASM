@@ -73,6 +73,18 @@ object Loot {
     }.getOrElse(ItemStack.EMPTY)
   }
 
+  /**
+   * A pre-programmed EEPROM registered from a datapack definition. Clients
+   * only receive the stacks, so they are matched by label as a fallback.
+   */
+  def eeprom(id: ResourceLocation, label: String): ItemStack = synchronized {
+    datapackEEPROMs.collectFirst {
+      case (eepromId, stack) if eepromId == id => stack.copy()
+    }.orElse {
+      Option(label).flatMap(label => eepromsForClient.find(_.get(OCComponents.LABEL.get()) == label)).map(_.copy())
+    }.getOrElse(ItemStack.EMPTY)
+  }
+
   def defaultOpenOS: ItemStack = synchronized {
     datapackDisks.collectFirst {
       case (stack, _) if stack.get(OCComponents.LOOT_DISK.get()) == defaultOpenOSId => stack.copy()

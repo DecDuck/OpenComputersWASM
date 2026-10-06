@@ -81,7 +81,13 @@ object ExtendedRecipe {
       val codeNbt = nbt.get(Settings.namespace + "eeprom")
       if (codeNbt != null && codeNbt.getType == StringTag.TYPE) {
         val codePath = codeNbt.asInstanceOf[StringTag].getAsString
-        val defaultEEPROM = if (codePath == "bios.lua") Loot.defaultEEPROM else ItemStack.EMPTY
+        // Either the Lua BIOS script, or the id of an EEPROM definition
+        // (data/<namespace>/opencomputers/eeproms/<name>.json).
+        val defaultEEPROM =
+          if (codePath == "bios.lua") Loot.defaultEEPROM
+          else Option(ResourceLocation.tryParse(codePath))
+            .map(id => Loot.eeprom(id, resultStack.get(OCComponents.LABEL.get())))
+            .getOrElse(ItemStack.EMPTY)
         if (!defaultEEPROM.isEmpty && defaultEEPROM.has(OCComponents.EEPROM_CODE.get())) {
           resultStack.set(OCComponents.EEPROM_CODE, defaultEEPROM.get(OCComponents.EEPROM_CODE.get()))
         }

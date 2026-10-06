@@ -1,0 +1,4 @@
+# Cargo build output (also covers alternate --target-dir directories).
+# Cargo.lock is committed, so the shipped EEPROM can be rebuilt reproducibly.
+/target*/
+

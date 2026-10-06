@@ -1,0 +1,30 @@
+package oc:machine@0.1.0;
+
+/// Interaction with opaque host objects returned by component callbacks,
+/// such as file handles or network connections.
+interface userdata {
+    use types.{handle, value-tree, call-result, method-info};
+
+    /// Lists the callbacks of an opaque value.
+    methods: func(value: handle) -> option<list<method-info>>;
+
+    /// Returns the documentation string of a callback.
+    doc: func(value: handle, method: string) -> option<string>;
+
+    /// Invokes a callback on an opaque value.
+    invoke: func(value: handle, method: string, args: value-tree) -> call-result;
+
+    /// Indexes the value (Lua `value[key]`).
+    apply: func(value: handle, args: value-tree) -> call-result;
+
+    /// Assigns into the value (Lua `value[key] = x`).
+    unapply: func(value: handle, args: value-tree) -> call-result;
+
+    /// Calls the value as a function.
+    call: func(value: handle, args: value-tree) -> call-result;
+
+    /// Releases the handle and disposes the host object. Using the handle
+    /// afterwards is an error.
+    release: func(value: handle);
+}
+
